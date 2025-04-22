@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline';">
+    <title>OVERRIDE CLUB - Coming Soon</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #000;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+            padding: 40px 20px;
+        }
+        
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(50,0,60,0.2), rgba(0,0,0,0));
+            z-index: -2;
+            pointer-events: none;
+        }
+        
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("noise.png");
+            opacity: 0.05;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        .content-wrapper {
+            width: 100%;
+            max-width: 800px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+        
+        .logo-container {
+            width: 80%;
+            max-width: 600px;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .logo {
+            width: 100%;
+            height: auto;
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
+            animation: pulse 3s infinite alternate;
+        }
+        
+        .coming-soon {
+            font-size: 2rem;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            margin-top: 20px;
+            position: relative;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+            animation: slideIn 1.5s ease-out;
+        }
+        
+        .coming-soon::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 3px;
+            background-color: #fff;
+            animation: lineExpand 2s forwards 1.5s;
+            box-shadow: 0 0 15px rgba(255,255,255,0.8);
+        }
+        
+        .tagline {
+            margin-top: 30px;
+            opacity: 0;
+            animation: fadeIn 1s forwards 2.5s;
+            font-size: 1rem;
+            text-align: center;
+            max-width: 80%;
+        }
+        
+        .countdown {
+            margin-top: 30px;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            opacity: 0;
+            animation: fadeIn 1s forwards 3s;
+        }
+        
+        .particles {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+        }
+        
+        .social-links {
+            margin-top: 40px;
+            opacity: 0;
+            animation: fadeIn 1s forwards 3.5s;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+        
+        .social-links a {
+            color: #fff;
+            margin: 10px 15px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            text-decoration: none;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .social-links a:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            border-color: rgba(255,255,255,0.6);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .divider {
+            width: 50px;
+            height: 1px;
+            background: rgba(255,255,255,0.3);
+            margin: 20px 0;
+        }
+        
+        .corner-decoration {
+            position: fixed;
+            width: 150px;
+            height: 150px;
+            border: 1px solid rgba(255,255,255,0.1);
+            pointer-events: none;
+        }
+        
+        .corner-decoration.top-left {
+            top: 20px;
+            left: 20px;
+            border-right: none;
+            border-bottom: none;
+        }
+        
+        .corner-decoration.top-right {
+            top: 20px;
+            right: 20px;
+            border-left: none;
+            border-bottom: none;
+        }
+        
+        .corner-decoration.bottom-left {
+            bottom: 20px;
+            left: 20px;
+            border-right: none;
+            border-top: none;
+        }
+        
+        .corner-decoration.bottom-right {
+            bottom: 20px;
+            right: 20px;
+            border-left: none;
+            border-top: none;
+        }
+        
+        .notification-button {
+            margin-top: 30px;
+            padding: 12px 30px;
+            background-color: transparent;
+            border: 2px solid white;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            animation: fadeIn 1s forwards 4s;
+        }
+        
+        .notification-button:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.03); }
+        }
+        
+        @keyframes slideIn {
+            from { 
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to { 
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes lineExpand {
+            from { width: 0; }
+            to { width: 100px; }
+        }
+        
+        @media (max-width: 768px) {
+            .logo-container {
+                width: 90%;
+            }
+            .coming-soon {
+                font-size: 1.5rem;
+                letter-spacing: 5px;
+            }
+            .social-links a {
+                margin: 8px;
+            }
+            .corner-decoration {
+                width: 80px;
+                height: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay"></div>
+    <div class="noise-overlay"></div>
+    
+    <div class="corner-decoration top-left"></div>
+    <div class="corner-decoration top-right"></div>
+    <div class="corner-decoration bottom-left"></div>
+    <div class="corner-decoration bottom-right"></div>
+    
+    <div class="particles" id="particles"></div>
+    
+    <div class="content-wrapper">
+        <div class="logo-container">
+            <img src="OverRideClub.png" alt="OVERRIDE CLUB" class="logo">
+        </div>
+        
+        <div class="coming-soon">COMING SOON</div>
+        
+        <div class="divider"></div>
+        
+        <div class="tagline">Experience music like never before. The new standard in nightlife.</div>
+        
+        <div class="countdown" id="countdown">LAUNCHING IN: 30 DAYS</div>
+        
+        <button class="notification-button" id="notifyBtn">NOTIFY ME</button>
+        
+        <div class="social-links">
+            <a href="https://www.instagram.com/overrideclub/" class="social-link">Instagram</a>
+            <a href="#" class="social-link">Twitter</a>
+            <a href="#" class="social-link">Facebook</a>
+        </div>
+    </div>
+
+    <script>
+        // Create particles
+        document.addEventListener('DOMContentLoaded', function() {
+            const particlesContainer = document.getElementById('particles');
+            const numberOfParticles = 30;
+            
+            for (let i = 0; i < numberOfParticles; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Random position
+                const x = Math.floor(Math.random() * window.innerWidth);
+                const y = Math.floor(Math.random() * window.innerHeight);
+                
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                
+                // Random size
+                const size = Math.random() * 2 + 1;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                
+                // Random opacity
+                particle.style.opacity = Math.random() * 0.5 + 0.3;
+                
+                particlesContainer.appendChild(particle);
+            }
+            
+            // Notification button functionality
+            const notifyButton = document.getElementById('notifyBtn');
+            if (notifyButton) {
+                notifyButton.addEventListener('click', function() {
+                    this.textContent = 'THANK YOU!';
+                    setTimeout(() => {
+                        this.textContent = 'NOTIFY ME';
+                    }, 2000);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
