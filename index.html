@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src https://cdnjs.cloudflare.com;">
     <title>OVERRIDE CLUB - Coming Soon</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -35,6 +36,7 @@
             background: linear-gradient(45deg, rgba(50,0,60,0.2), rgba(0,0,0,0));
             z-index: -2;
             pointer-events: none;
+            animation: gradientShift 15s infinite alternate;
         }
         
         .noise-overlay {
@@ -49,6 +51,33 @@
             pointer-events: none;
         }
         
+        .glow-overlay {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(50,0,60,0.15) 0%, rgba(0,0,0,0) 70%);
+            z-index: -1;
+            pointer-events: none;
+            animation: pulseGlow 8s infinite alternate;
+        }
+        
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+                             linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: -1;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+        
         .content-wrapper {
             width: 100%;
             max-width: 800px;
@@ -56,6 +85,7 @@
             flex-direction: column;
             align-items: center;
             margin-bottom: 40px;
+            position: relative;
         }
         
         .logo-container {
@@ -79,7 +109,7 @@
             margin-top: 20px;
             position: relative;
             text-shadow: 0 0 10px rgba(255,255,255,0.5);
-            animation: slideIn 1.5s ease-out;
+            animation: glitchText 5s infinite, slideIn 1.5s ease-out;
         }
         
         .coming-soon::after {
@@ -96,6 +126,13 @@
         }
         
         .tagline {
+            font-size: 2rem;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            margin-top: 20px;
+            position: relative;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+            animation: glitchText 5s infinite, slideIn 1.5s ease-out;
             margin-top: 30px;
             opacity: 0;
             animation: fadeIn 1s forwards 2.5s;
@@ -109,7 +146,7 @@
             font-size: 1.5rem;
             letter-spacing: 2px;
             opacity: 0;
-            animation: fadeIn 1s forwards 3s;
+            animation: fadeIn 1s forwards 3s, countdownPulse 2s infinite alternate;
         }
         
         .particles {
@@ -126,6 +163,7 @@
             height: 3px;
             background-color: rgba(255, 255, 255, 0.5);
             border-radius: 50%;
+            animation: float 20s infinite linear;
         }
         
         .social-links {
@@ -141,11 +179,16 @@
         .social-links a {
             color: #fff;
             margin: 10px 15px;
-            padding: 10px 20px;
-            font-size: 1rem;
+            padding: 15px;
+            font-size: 1.5rem;
             text-decoration: none;
             border: 1px solid rgba(255,255,255,0.3);
-            border-radius: 30px;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
@@ -153,10 +196,26 @@
         }
         
         .social-links a:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transform: translateY(-5px) rotate(10deg);
+            box-shadow: 0 0 20px rgba(255,255,255,0.4);
             border-color: rgba(255,255,255,0.6);
             background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .social-links a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 0;
+            background: rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+            z-index: -1;
+        }
+        
+        .social-links a:hover::before {
+            height: 100%;
         }
         
         .divider {
@@ -164,6 +223,19 @@
             height: 1px;
             background: rgba(255,255,255,0.3);
             margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .divider::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+            animation: dividerShine 3s infinite;
         }
         
         .corner-decoration {
@@ -172,6 +244,7 @@
             height: 150px;
             border: 1px solid rgba(255,255,255,0.1);
             pointer-events: none;
+            transition: all 0.5s ease;
         }
         
         .corner-decoration.top-left {
@@ -179,6 +252,7 @@
             left: 20px;
             border-right: none;
             border-bottom: none;
+            animation: cornerPulse 4s infinite alternate;
         }
         
         .corner-decoration.top-right {
@@ -186,6 +260,7 @@
             right: 20px;
             border-left: none;
             border-bottom: none;
+            animation: cornerPulse 4s infinite alternate 1s;
         }
         
         .corner-decoration.bottom-left {
@@ -193,6 +268,7 @@
             left: 20px;
             border-right: none;
             border-top: none;
+            animation: cornerPulse 4s infinite alternate 2s;
         }
         
         .corner-decoration.bottom-right {
@@ -200,10 +276,39 @@
             right: 20px;
             border-left: none;
             border-top: none;
+            animation: cornerPulse 4s infinite alternate 3s;
+        }
+        
+        .notification-form {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            opacity: 0;
+            animation: fadeIn 1s forwards 4s;
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .email-input {
+            width: 100%;
+            padding: 12px 20px;
+            margin-bottom: 15px;
+            background-color: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .email-input:focus {
+            outline: none;
+            border-color: white;
+            box-shadow: 0 0 10px rgba(255,255,255,0.3);
         }
         
         .notification-button {
-            margin-top: 30px;
+            width: 100%;
             padding: 12px 30px;
             background-color: transparent;
             border: 2px solid white;
@@ -213,22 +318,94 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
-            opacity: 0;
-            animation: fadeIn 1s forwards 4s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
         
         .notification-button:hover {
             background-color: rgba(255,255,255,0.1);
+            box-shadow: 0 0 20px rgba(255,255,255,0.3);
+        }
+        
+        .notification-button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255,255,255,0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+        
+        .notification-button:hover::after {
+            animation: rippleEffect 1s ease;
+        }
+        
+        .interactive-shapes {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .shape {
+            position: absolute;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50%;
+            animation: floatShapes 20s infinite linear;
+        }
+        
+        .thank-you-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0,0,0,0.8);
+            color: white;
+            padding: 20px 40px;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 5px;
+            font-size: 1.2rem;
+            text-align: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s ease;
+            z-index: 100;
+        }
+        
+        .thank-you-message.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .cursor-follower {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            mix-blend-mode: difference;
+            transition: transform 0.1s ease, width 0.3s ease, height 0.3s ease;
         }
         
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
         @keyframes pulse {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.03); }
+            0% { transform: scale(1); filter: brightness(1); }
+            100% { transform: scale(1.03); filter: brightness(1.2); }
         }
         
         @keyframes slideIn {
@@ -247,6 +424,69 @@
             to { width: 100px; }
         }
         
+        @keyframes float {
+            0% { transform: translateY(0) translateX(0); }
+            25% { transform: translateY(-30px) translateX(30px); }
+            50% { transform: translateY(-60px) translateX(10px); }
+            75% { transform: translateY(-30px) translateX(-20px); }
+            100% { transform: translateY(0) translateX(0); }
+        }
+        
+        @keyframes gradientShift {
+            0% { background: linear-gradient(45deg, rgba(50,0,60,0.2), rgba(0,0,0,0)); }
+            50% { background: linear-gradient(45deg, rgba(0,0,60,0.2), rgba(0,0,0,0)); }
+            100% { background: linear-gradient(45deg, rgba(60,0,50,0.2), rgba(0,0,0,0)); }
+        }
+        
+        @keyframes pulseGlow {
+            0% { opacity: 0.5; }
+            50% { opacity: 0.8; }
+            100% { opacity: 0.5; }
+        }
+        
+        @keyframes cornerPulse {
+            0% { border-color: rgba(255,255,255,0.1); }
+            100% { border-color: rgba(255,255,255,0.3); }
+        }
+        
+        @keyframes dividerShine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        @keyframes countdownPulse {
+            0% { text-shadow: 0 0 5px rgba(255,255,255,0.5); }
+            100% { text-shadow: 0 0 15px rgba(255,255,255,0.8); }
+        }
+        
+        @keyframes glitchText {
+            0% { text-shadow: 0 0 5px rgba(255,255,255,0.5); }
+            5% { text-shadow: -2px 0 rgba(255,0,0,0.5), 2px 0 rgba(0,0,255,0.5); }
+            10% { text-shadow: 0 0 5px rgba(255,255,255,0.5); }
+            15% { text-shadow: -2px 0 rgba(0,255,0,0.5), 2px 0 rgba(255,0,255,0.5); }
+            16% { text-shadow: 0 0 5px rgba(255,255,255,0.5); }
+            100% { text-shadow: 0 0 5px rgba(255,255,255,0.5); }
+        }
+        
+        @keyframes rippleEffect {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(20, 20);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes floatShapes {
+            0% { transform: translateY(0) translateX(0) rotate(0deg); }
+            25% { transform: translateY(-50px) translateX(50px) rotate(90deg); }
+            50% { transform: translateY(-100px) translateX(20px) rotate(180deg); }
+            75% { transform: translateY(-50px) translateX(-40px) rotate(270deg); }
+            100% { transform: translateY(0) translateX(0) rotate(360deg); }
+        }
+        
         @media (max-width: 768px) {
             .logo-container {
                 width: 90%;
@@ -257,6 +497,9 @@
             }
             .social-links a {
                 margin: 8px;
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
             }
             .corner-decoration {
                 width: 80px;
@@ -268,6 +511,8 @@
 <body>
     <div class="overlay"></div>
     <div class="noise-overlay"></div>
+    <div class="glow-overlay"></div>
+    <div class="grid-overlay"></div>
     
     <div class="corner-decoration top-left"></div>
     <div class="corner-decoration top-right"></div>
@@ -275,6 +520,8 @@
     <div class="corner-decoration bottom-right"></div>
     
     <div class="particles" id="particles"></div>
+    <div class="interactive-shapes" id="shapes"></div>
+    <div class="cursor-follower" id="cursor"></div>
     
     <div class="content-wrapper">
         <div class="logo-container">
@@ -285,17 +532,33 @@
         
         <div class="divider"></div>
         
-        <div class="tagline">Experience music like never before. The new standard in nightlife.</div>
+        <div class="tagline">Override the Ordinary.</div>
+        <div class="tagline">Redefine Comfort. Override Limits.</div>
         
-        <div class="countdown" id="countdown">LAUNCHING IN: 30 DAYS</div>
-        
-        <button class="notification-button" id="notifyBtn">NOTIFY ME</button>
         
         <div class="social-links">
-            <a href="https://www.instagram.com/overrideclub/" class="social-link">Instagram</a>
-            <a href="#" class="social-link">Twitter</a>
-            <a href="#" class="social-link">Facebook</a>
+            <a href="https://www.instagram.com/overrideclub/" class="social-link" aria-label="Instagram">
+                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                </svg>
+            </a>
+            <a href="#" class="social-link" aria-label="Twitter">
+                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+                </svg>
+            </a>
+            <a href="#" class="social-link" aria-label="Facebook">
+                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                </svg>
+            </a>
         </div>
+    </div>
+    
+    <div class="thank-you-message" id="thankYouMessage">
+        Thank you for subscribing! We'll keep you updated.
     </div>
 
     <script>
@@ -323,19 +586,141 @@
                 // Random opacity
                 particle.style.opacity = Math.random() * 0.5 + 0.3;
                 
+                // Random animation duration
+                const duration = Math.random() * 20 + 10;
+                particle.style.animationDuration = duration + 's';
+                
+                // Random animation delay
+                const delay = Math.random() * 5;
+                particle.style.animationDelay = delay + 's';
+                
                 particlesContainer.appendChild(particle);
+            }
+            
+            // Create shapes
+            const shapesContainer = document.getElementById('shapes');
+            const numberOfShapes = 5;
+            
+            for (let i = 0; i < numberOfShapes; i++) {
+                const shape = document.createElement('div');
+                shape.classList.add('shape');
+                
+                // Random position
+                const x = Math.floor(Math.random() * window.innerWidth);
+                const y = Math.floor(Math.random() * window.innerHeight);
+                
+                shape.style.left = x + 'px';
+                shape.style.top = y + 'px';
+                
+                // Random size
+                const size = Math.random() * 100 + 50;
+                shape.style.width = size + 'px';
+                shape.style.height = size + 'px';
+                
+                // Random opacity
+                shape.style.opacity = Math.random() * 0.2 + 0.1;
+                
+                // Random animation duration
+                const duration = Math.random() * 30 + 20;
+                shape.style.animationDuration = duration + 's';
+                
+                // Random animation delay
+                const delay = Math.random() * 10;
+                shape.style.animationDelay = delay + 's';
+                
+                shapesContainer.appendChild(shape);
             }
             
             // Notification button functionality
             const notifyButton = document.getElementById('notifyBtn');
+            const emailInput = document.getElementById('emailInput');
+            const thankYouMessage = document.getElementById('thankYouMessage');
+            
             if (notifyButton) {
                 notifyButton.addEventListener('click', function() {
-                    this.textContent = 'THANK YOU!';
-                    setTimeout(() => {
-                        this.textContent = 'NOTIFY ME';
-                    }, 2000);
+                    if (emailInput.value) {
+                        thankYouMessage.classList.add('active');
+                        setTimeout(() => {
+                            thankYouMessage.classList.remove('active');
+                            emailInput.value = '';
+                        }, 3000);
+                    }
                 });
             }
+            
+            // Custom cursor
+            const cursor = document.getElementById('cursor');
+            
+            document.addEventListener('mousemove', function(e) {
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
+            });
+            
+            // Make cursor larger on interactive elements
+            const interactiveElements = document.querySelectorAll('a, button, input');
+            
+            interactiveElements.forEach(element => {
+                element.addEventListener('mouseenter', function() {
+                    cursor.style.width = '40px';
+                    cursor.style.height = '40px';
+                    cursor.style.borderColor = 'rgba(255,255,255,0.5)';
+                });
+                
+                element.addEventListener('mouseleave', function() {
+                    cursor.style.width = '20px';
+                    cursor.style.height = '20px';
+                    cursor.style.borderColor = 'rgba(255,255,255,0.3)';
+                });
+            });
+            
+            // Dynamic countdown
+            updateCountdown();
+            setInterval(updateCountdown, 1000 * 60 * 60 * 24); // Update daily
+            
+            function updateCountdown() {
+                const launchDate = new Date();
+                launchDate.setDate(launchDate.getDate() + 30); // 30 days from now
+                
+                const diff = launchDate - new Date();
+                const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+                
+                const countdownElement = document.getElementById('countdown');
+                countdownElement.textContent = `LAUNCHING IN: ${days} DAYS`;
+            }
+            
+            // Interactive logo
+            const logo = document.querySelector('.logo');
+            
+            logo.addEventListener('mouseenter', function() {
+                this.style.filter = 'drop-shadow(0 0 20px rgba(255,255,255,0.6))';
+            });
+            
+            logo.addEventListener('mouseleave', function() {
+                this.style.filter = 'drop-shadow(0 0 10px rgba(255,255,255,0.3))';
+            });
+            
+            // Hover effect for social links
+            const socialLinks = document.querySelectorAll('.social-link');
+            
+            socialLinks.forEach(link => {
+                link.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-5px) rotate(10deg)';
+                });
+                
+                link.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) rotate(0deg)';
+                });
+            });
+            
+            // Add some interactivity to mouse movement
+            document.addEventListener('mousemove', function(e) {
+                const mouseX = e.clientX / window.innerWidth;
+                const mouseY = e.clientY / window.innerHeight;
+                
+                // Move the glow overlay with the mouse
+                const glowOverlay = document.querySelector('.glow-overlay');
+                glowOverlay.style.transform = `translate(calc(-50% + ${mouseX * 50}px), calc(-50% + ${mouseY * 50}px))`;
+            });
         });
     </script>
 </body>
